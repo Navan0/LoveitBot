@@ -18,6 +18,14 @@ def process_or_store(tweet):
     file.write(json.dumps(tweet))
 
 
+def save_text(tweet):
+    for status in tweepy.Cursor(api.home_timeline).items(10):
+        file = open("text_file.txt", "w")
+        # file.write(tweet)
+        print(tweet)
+
+
 for status in tweepy.Cursor(api.home_timeline).items(10):
     # Process a single status
     process_or_store(status._json)
+    save_text(status.text)
