@@ -1,45 +1,49 @@
-class Vehicle(object):
-    base_sale_price = 0
-
-    def __init__(self, wheels, miles, make, model, year, sold_on):
-        self.wheels = wheels
-        self.miles = miles
-        self.make = make
-        self.model = model
-        self.year = year
-        self.sold_on = sold_on
-
-    def sale_price(self):
-        if self.sold_on is not None:
-            return 0.0  # Already sold
-        return 5000.0 * self.wheels
-
-    def purchase_price(self, amount):
-        self.amount = amount
-        if self.sold_on is None:
-            return 0.0  # Not yet sold
-        return self.amount*10
+import tweepy
+import json
+import nltk
+from tweepy import OAuthHandler
+from nltk.tokenize import TweetTokenizer
+from nltk.tokenize import word_tokenize
+nltk.download('punkt')
 
 
-v = Vehicle(4, 2, 'Honda', 'Accord', 2014, 800)
-print(v.purchase_price(800))
+def process_or_store():
+    consumer_key = '4IjEmWFE289MmeIqjcY5WBqow'
+    consumer_secret = 'PXNBzRcPNdEIygVl6C5eBH8r6hKPpLDmzff3Hil4d1QCnOtaiY'
+    access_token = '803306323467083776-sxV6wMoyG7HPuEmUxQXjKgy8HTEI3LV'
+    access_secret = 'POIqPfq7xbcUIbsBG9abHYMIJN2GzXNFPhzigejvt2BGT'
+    auth = OAuthHandler(consumer_key, consumer_secret)
+    auth.set_access_token(access_token, access_secret)
+    api = tweepy.API(auth)
+
+    def save_json(tweet):
+        with open('text.json', 'w') as file:
+            file.write(json.dumps(tweet))
+            tweet = json.loads(json.dumps(tweet))
+            return tweet
+            print("success")
+            # print(json.dumps(tweet))
+    for tweet in tweepy.Cursor(api.user_timeline).items(1):
+        save_json(tweet._json)
+
+    def process_tweet(tweet):
+        with open('text.json', 'r') as file:
+            line = file.readline()
+            tweet = json.loads(line)
+            #print(json.dumps(tweet))
+            print("processed")
+
+    process_tweet(tweet)
+
+    def tokens(distros_dict):
+        tw = distros_dict['text']
+        print(tw)
+        print("success")
+
+    with open('text.json', 'r') as f:
+        distros_dict = json.load(f)
+        # print(distros_dict)
+    tokens(distros_dict)
 
 
-class Truck(Vehicle):
-
-    def __init__(self, wheels, miles, make, model, year, sold_on):
-        """Return a new Truck object."""
-        self.wheels = wheels
-        self.miles = miles
-        self.make = make
-        self.model = model
-        self.year = year
-        self.sold_on = sold_on
-        self.base_sale_price = 10000
-
-    def quality(self):
-        return self.base_sale_price * self.miles
-
-
-v = Truck(4, 2, 'Honda', 'Accord', 2014, 800)
-print(v.quality())
+process_or_store()
